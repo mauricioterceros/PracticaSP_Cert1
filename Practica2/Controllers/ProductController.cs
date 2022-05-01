@@ -22,22 +22,50 @@ namespace Practica2.Controllers
         [HttpGet]
         public IActionResult GetProducts()
         {
-            return Ok();
+            return Ok(_productMgr.GetProducts());
         }
         [HttpPost]
-        public IActionResult CreateProduct()
+        public IActionResult CreateProduct(string name, string type, int stock)
         {
-            return Ok();
+            IActionResult res;
+            if ((type.ToUpper().Equals("SOCCER")) || (type.ToUpper().Equals("BASKET")))
+            {
+                Product createdProduct = _productMgr.CreateProduct(name, type.ToUpper(), stock);
+                res = Ok(createdProduct);
+            }
+            else
+            {
+                res = BadRequest();
+            }
+            return res;
         }
         [HttpPut]
-        public IActionResult UpdateProduct()
+        public IActionResult UpdateProduct(string codeToFind, string newName, int newStock)
         {
-            return Ok();
+            IActionResult res;
+            if (_productMgr.UpdateProuct(newName, newStock, codeToFind) < 0)
+            {
+                res = NotFound();
+            }
+            else
+            {
+                res = Ok();
+            }
+            return res;
         }
         [HttpDelete]
-        public IActionResult DeleteProduct()
+        public IActionResult DeleteProduct(string codeToFind)
         {
-            return Ok();
+            IActionResult res;
+            if (_productMgr.DeleteProduct(codeToFind) < 0)
+            {
+                res = NotFound();
+            }
+            else
+            {
+                res = Ok();
+            }
+            return res;
         }
     }
 }
