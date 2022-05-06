@@ -31,7 +31,9 @@ namespace Practica2.Controllers
             if ((type.ToUpper().Equals("SOCCER")) || (type.ToUpper().Equals("BASKET")))
             {
                 Product createdProduct = _productMgr.CreateProduct(name, type.ToUpper(), stock);
+               
                 res = Ok(createdProduct);
+                
             }
             else
             {

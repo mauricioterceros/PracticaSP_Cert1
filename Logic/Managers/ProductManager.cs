@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.Text;
 using Logic.Entities;
 using Microsoft.Extensions.Configuration;
-
+using System.Text.Json;
+using System.Text.Json.Serialization;
+using Newtonsoft.Json;
+using System.IO;
 namespace Logic.Managers
 {
     public class ProductManager
@@ -16,10 +19,23 @@ namespace Logic.Managers
         {
             deleted = 0;
             _configuration = configuration;
-            _products = new List<Product>();
-            _products.Add(new Product() { Name = "Pelota Adidas", Type = "SOCCER", Stock = 10, Code = "", Price = 0 });
-            _products.Add(new Product() { Name = "Polera MESSI PSG", Type = "SOCCER", Stock = 15, Code = "", Price = 0 });
-            _products.Add(new Product() { Name = "Polera Lebron James LAKERS ", Type = "BASKET", Stock = 7, Code = "", Price = 0 });
+            
+            string path = _configuration.GetSection("DBroute").Value;
+            if (!File.Exists(path))
+            {
+                _products = new List<Product>();
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+                _products.Add(new Product() { Name = "Pelota Adidas", Type = "SOCCER", Stock = 10, Code = "", Price = 0 });
+                _products.Add(new Product() { Name = "Polera MESSI PSG", Type = "SOCCER", Stock = 15, Code = "", Price = 0 });
+                _products.Add(new Product() { Name = "Polera Lebron James LAKERS ", Type = "BASKET", Stock = 7, Code = "", Price = 0 });
+            }
+            else
+            {
+                string dbjson = File.ReadAllText(path);
+                
+                _products = JsonConvert.DeserializeObject<List<Product>>(dbjson);
+            }
+            
         }
 
         public List<Product> GetProducts()
@@ -32,6 +48,13 @@ namespace Logic.Managers
                 }
                 //aqui definir precio usando backing service para los productos sin precio definido
             }
+            string path = _configuration.GetSection("DBroute").Value;
+            if (!File.Exists(path))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
+            string json = JsonConvert.SerializeObject(_products);
+            System.IO.File.WriteAllText(path, json);
             return _products;
         }
         public Product CreateProduct(string name, string type, int stock)
@@ -40,6 +63,13 @@ namespace Logic.Managers
             nprod.Code = $"{nprod.Type}-{_products.Count+deleted}"; //add deleted elements to avoid code conflict
             //aqui definir precio usando backing service
             _products.Add(nprod);
+            string path = _configuration.GetSection("DBroute").Value;
+            if (!File.Exists(path))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
+            string json = JsonConvert.SerializeObject(_products);
+            System.IO.File.WriteAllText(path, json);
             return nprod;
         }
         public int UpdateProuct(string name, int stock, string code)
@@ -56,6 +86,13 @@ namespace Logic.Managers
                 fproduct.Name = name;
                 fproduct.Stock = stock;
             }
+            string path = _configuration.GetSection("DBroute").Value;
+            if (!File.Exists(path))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
+            string json = JsonConvert.SerializeObject(_products);
+            System.IO.File.WriteAllText(path, json);
             return res;
         }
         public int DeleteProduct(string code)
@@ -71,6 +108,13 @@ namespace Logic.Managers
                 _products.RemoveAt(indProduct);
                 deleted++;
             }
+            string path = _configuration.GetSection("DBroute").Value;
+            if (!File.Exists(path))
+            {
+                Directory.CreateDirectory(Path.GetDirectoryName(path));
+            }
+            string json = JsonConvert.SerializeObject(_products);
+            System.IO.File.WriteAllText(path, json);
             return res;
         }
     }
