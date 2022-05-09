@@ -12,6 +12,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Logic.Managers;
+using Services;
 
 namespace Practica2
 {
@@ -57,6 +58,7 @@ namespace Practica2
             });
             services.AddControllers();
             services.AddSingleton<ProductManager>();
+            services.AddTransient<NumberService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

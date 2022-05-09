@@ -20,6 +20,7 @@ namespace Practica2.Controllers
             _productMgr = productManager;
         }
         [HttpGet]
+        [Route("/calculate-prices")]
         public IActionResult GetProducts()
         {
             return Ok(_productMgr.GetProducts());
