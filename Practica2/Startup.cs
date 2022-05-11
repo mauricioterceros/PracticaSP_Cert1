@@ -13,6 +13,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Logic.Managers;
 using Services;
+using Practica2.Middlewares;
 
 namespace Practica2
 {
@@ -68,6 +69,7 @@ namespace Practica2
             {
                 app.UseDeveloperExceptionPage();
             }
+            app.UseExceptionMiddleware();
 
             app.UseHttpsRedirection();
 

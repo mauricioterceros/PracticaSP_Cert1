@@ -15,21 +15,35 @@ namespace Services
         }
         public async Task<Number> GetNumber()
         {
-            string addressURL = _configuration.GetSection("addressURL").Value;
-            HttpClient client = new HttpClient();
-            HttpResponseMessage reponse = await client.GetAsync(addressURL);
+            try
+            {
+                string addressURL = _configuration.GetSection("addressURL").Value;
+                HttpClient client = new HttpClient();
+                HttpResponseMessage reponse = await client.GetAsync(addressURL);
 
-            Number number;
-            if (reponse.IsSuccessStatusCode)
-            {
-                string responsenumber = await reponse.Content.ReadAsStringAsync();
-                number = JsonConvert.DeserializeObject<Number>(responsenumber);
+                Number number;
+                if (reponse.IsSuccessStatusCode)
+                {
+                    string responsenumber = await reponse.Content.ReadAsStringAsync();
+                    number = JsonConvert.DeserializeObject<Number>(responsenumber);
+                }
+                else
+                {
+                    string errorMessage = "El servidor de números tuvo problemas";
+                    throw new NumberServiceNotFoundException(errorMessage);
+                }
+                return number;
             }
-            else
+            catch (Exception ex)
             {
-                number = new Number();
+                string errorMessage = "El servidor de números paso por problemas inesperados";
+                throw new NumberServiceException(errorMessage);
             }
-            return number;
+            finally
+            {
+
+            }
+            
         }
     }
 }
