@@ -28,47 +28,20 @@ namespace Practica2.Controllers
         [HttpPost]
         public IActionResult CreateProduct(string name, string type, int stock)
         {
-            IActionResult res;
-            if ((type.ToUpper().Equals("SOCCER")) || (type.ToUpper().Equals("BASKET")))
-            {
-                Product createdProduct = _productMgr.CreateProduct(name, type.ToUpper(), stock);
-               
-                res = Ok(createdProduct);
-                
-            }
-            else
-            {
-                res = BadRequest();
-            }
-            return res;
+            Product createdProduct = _productMgr.CreateProduct(name, type.ToUpper(), stock);
+            return Ok(createdProduct);
         }
         [HttpPut]
         public IActionResult UpdateProduct(string codeToFind, string newName, int newStock)
         {
-            IActionResult res;
-            if (_productMgr.UpdateProuct(newName, newStock, codeToFind) < 0)
-            {
-                res = NotFound();
-            }
-            else
-            {
-                res = Ok();
-            }
-            return res;
+            int res = _productMgr.UpdateProuct(newName, newStock, codeToFind);
+            return Ok(res);
         }
         [HttpDelete]
         public IActionResult DeleteProduct(string codeToFind)
         {
-            IActionResult res;
-            if (_productMgr.DeleteProduct(codeToFind) < 0)
-            {
-                res = NotFound();
-            }
-            else
-            {
-                res = Ok();
-            }
-            return res;
+            int res = _productMgr.DeleteProduct(codeToFind);
+            return Ok(res);
         }
     }
 }

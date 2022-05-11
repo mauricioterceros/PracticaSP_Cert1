@@ -34,14 +34,10 @@ namespace Services
                 }
                 return number;
             }
-            catch (Exception ex)
+            catch (Exception)
             {
                 string errorMessage = "El servidor de números paso por problemas inesperados";
                 throw new NumberServiceException(errorMessage);
-            }
-            finally
-            {
-
             }
             
         }

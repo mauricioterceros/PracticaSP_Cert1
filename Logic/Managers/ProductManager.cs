@@ -49,12 +49,12 @@ namespace Logic.Managers
             {
                 if (prod.Code.Equals(""))
                 {
-                    prod.Code = $"{prod.Type}-{_products.IndexOf(prod)+deleted}"; //add deleted elements to avoid code conflict
+                    prod.Code = $"{prod.Type}-{_products.IndexOf(prod)+deleted}";
                 }
-                while (prod.Price.Equals(0.0))
+                while (prod.Price <= 0.0)
                 {
                     recivednumber = _numberService.GetNumber().Result;
-                    prod.Price = recivednumber.digit;  //Cambiar digit por nombre de lo que necesite
+                    prod.Price = recivednumber.digit;
                 }
             }
             string path = _configuration.GetSection("DBroute").Value;
@@ -68,11 +68,21 @@ namespace Logic.Managers
         }
         public Product CreateProduct(string name, string type, int stock)
         {
+            if (string.IsNullOrWhiteSpace(name))
+            {
+                throw new InvalidProductDataException("Invalid product name");
+            }
+            if (!(type.Equals("SOCCER")) || !(type.Equals("BASKET")))
+            {
+                throw new InvalidProductDataException("Invalid product type");
+            }
+            if (stock < 0)
+            {
+                throw new InvalidProductDataException("Invalid product stock");
+            }
             Number recivednumber = _numberService.GetNumber().Result;
             Product nprod = new Product() { Name = name, Type = type, Stock = stock, Code = "", Price = 0.0 };
-            nprod.Code = $"{nprod.Type}-{_products.Count+deleted}"; //add deleted elements to avoid code conflict
-            //aqui definir precio usando backing service
-
+            nprod.Code = $"{nprod.Type}-{_products.Count+deleted}"; 
             _products.Add(nprod);
             string path = _configuration.GetSection("DBroute").Value;
             if (!File.Exists(path))
@@ -90,9 +100,18 @@ namespace Logic.Managers
             if (indProduct < 0)
             {
                 res = indProduct;
+                throw new ProductNotFoundException("Product with that code doesn't exist");
             }
             else
             {
+                if (string.IsNullOrWhiteSpace(name))
+                {
+                    throw new InvalidProductDataException("Invalid product name");
+                }
+                if (stock < 0)
+                {
+                    throw new InvalidProductDataException("Invalid product stock");
+                }
                 Product fproduct = _products[indProduct];
                 fproduct.Name = name;
                 fproduct.Stock = stock;
@@ -113,6 +132,7 @@ namespace Logic.Managers
             if (indProduct < 0)
             {
                 res = indProduct;
+                throw new ProductNotFoundException("Product with that code doesn't exist");
             }
             else
             {

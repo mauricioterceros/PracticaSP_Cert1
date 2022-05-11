@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 using Services;
+using Logic;
 
 namespace Practica2.Middlewares
 {
@@ -37,6 +38,16 @@ namespace Practica2.Middlewares
             if (ex.InnerException is NumberServiceException)
             {
                 errorMessage = "Something happens on our Backing Services (out of our system): " + ex.Message;
+                errorCode = (int)HttpStatusCode.NotFound;
+            }
+            if (ex is InvalidProductDataException)
+            {
+                errorMessage = "Data Exception: " + ex.Message;
+                errorCode = (int)HttpStatusCode.NotFound;
+            }
+            if (ex is ProductNotFoundException)
+            {
+                errorMessage = "Product not found: " + ex.Message;
                 errorCode = (int)HttpStatusCode.NotFound;
             }
             var response = new { Message = errorMessage, ErrorCode = errorCode };
